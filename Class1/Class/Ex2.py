@@ -1,11 +1,10 @@
-import requests
 import time
 import requests
 
 
 def main():
     URL = "http://magshimail.com/login/login.php"
-    PATH = "C:\\Users\\magshimim\\PycharmProjects\\Web_Programming\\Class1\\top250.txt"
+    PATH = "C:\\Users\\magshimim\\PycharmProjects\\Web_Programming\\Class1\\Class\\top250.txt"
     WRONG = "Your Login Name or Password is invalid"
     password_list = red_passwords(PATH)
     for password in password_list:
