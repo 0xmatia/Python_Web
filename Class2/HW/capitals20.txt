@@ -1,0 +1,20 @@
+1,China,Beijing,20693000
+2,India,New Delhi,16787949
+3,Japan,Tokyo,13189000
+4,Philippines,Manila,12877253
+5,Russia,Moscow,11541000
+6,Egypt,Cairo,10230350
+7,Indonesia,Jakarta,10187595
+8,Democratic Republic of the Congo,Kinshasa,10125000
+9,South Korea,Seoul,9989795
+10,Mexico,Mexico City,8851080
+11,Iran,Tehran,8846782
+12,United Kingdom,London,8630100
+13,Peru,Lima,8481415
+14,Thailand,Bangkok,8249117
+15,Colombia,Bogotá,7613303
+16,Vietnam,Hanoi,7587800
+17,Hong Kong,Hong Kong,7298600
+18,Iraq,Baghdad,7216040
+19,Singapore,Singapore,5535000
+20,Turkey,Ankara,5150072
