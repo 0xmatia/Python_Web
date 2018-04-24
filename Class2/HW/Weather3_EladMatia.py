@@ -4,7 +4,7 @@ import datetime
 
 def main():
     # get hold of the text data
-    path = "C:\\Users\\eladm\\Documents\\Python_Web\\Class2\\HW\\capitals20.txt"
+    path = "C:\\Users\\magshimim\\Documents\\Python_Web\\Class2\\HW\\capitals20.txt"
     IP = '52.89.157.137'
     PORT = 77
     address = (IP, PORT)
