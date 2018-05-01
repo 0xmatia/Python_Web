@@ -11,7 +11,7 @@ def get_text(file_path):
     return text_string
 
 
-def return_list_index(string, char):
+def return_song_list(string, char):
     """
     The function returns a list with all the indexes of @param char
     :param string: the string to check occurrences
@@ -32,7 +32,7 @@ def extract_data(filepath):
     song_list = []
     raw_string = get_text(filepath)
     # get song name:
-    songs_name = return_list_index(raw_string, '*')
+    songs_name = return_song_list(raw_string, '*')
     print(songs_name)
     for i in songs_name:
         i = songs_name[i:raw_string.find(':', i)]
