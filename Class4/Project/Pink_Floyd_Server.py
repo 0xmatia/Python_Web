@@ -20,7 +20,8 @@ def main():
                 response = client_socket.recv(1024).decode()
                 command, parameter = disassemble_response(response)
                 if not command == "Exit":
-                    call_function[command](parameter)
+                    a = call_function[command](parameter)
+                    client_socket.sendall(a.encode())
             except Exception:
                 print("Client disconnected unexpectedly")
                 break
@@ -44,30 +45,37 @@ def disassemble_response(client_response):
 
 def Alist(parameter):
     print("Alist function activated")
+    return "Alist function activated"
 
 
 def SongsInAlb(paramter):
     print("SongsInAlb function activated")
+    return "SongsInAlb function activated"
 
 
 def SongLen(parameter):
     print("SongsLen function activated")
+    return "SongsLen function activated"
 
 
 def GetLyc(parameter):
     print("GetLyc function activated")
+    return "GetLyc function activated"
 
 
 def WhichAlb(parameter):
     print("WhichAlb function activated")
+    return "WhichAlb function activated"
 
 
 def SByName(parameter):
     print("SByName function activated")
+    return "SByName function activated"
 
 
 def SByLyc(parameter):
     print("SByLyc function activated")
+    return "SByLyc function activated"
 
 
 if __name__ == '__main__':

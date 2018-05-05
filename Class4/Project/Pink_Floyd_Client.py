@@ -13,7 +13,7 @@ def main():
     print(connection.recv(1024).decode())  # connection to server was successful
     choice = "Alist"
     while not choice == command_list[7] and flag:
-        print(" >>>>>>Command list: Alist, SongsInAlb, SongLen, GetLyc, WhichAlb, SByName, SByLyc, Exit<<<<<<")
+        print(" >>>>>> Command list: Alist, SongsInAlb, SongLen, GetLyc, WhichAlb, SByName, SByLyc, Exit <<<<<<")
         choice = input("Enter command: ")
         if choice == command_list[0]:
             flag = assemble_request(command_list[0])
@@ -51,6 +51,7 @@ def assemble_request(command, parameter=""):
     """
     try:
         connection.sendall(("command=" + command + "&parameter=" + parameter).encode())
+        print(connection.recv(1024).decode())  # receive and print server response
         return True
     except Exception:
         print("Can't reach server. Program is being terminated.")
