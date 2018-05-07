@@ -11,36 +11,32 @@ def get_text(file_path):
     return text_string
 
 
-def return_song_list(string, char):
-    """
-    The function returns a list with all the indexes of @param char
-    :param string: the string to check occurrences
-    :type string: str
-    :param char: the char to search in the string
-    :type char: string
-    :return: a list with all the indexes of the string
-    :rtype: list
-    """
-    index_list = []
-    for i in string:
-        if i == char:
-            index_list.append(i+1)
-    return index_list
+def extract_data(input_file):
+    song_index = 1
+    song_name = ""
+    song_length = 0
+    singer = ""
+    lyc = ""
+    for song in range(0,
+                      input_file.count(
+                          "*")):  # run through the number of songs, each time assemble the required information
 
-
-def extract_data(filepath):
-    song_list = []
-    raw_string = get_text(filepath)
-    # get song name:
-    songs_name = return_song_list(raw_string, '*')
-    print(songs_name)
-    for i in songs_name:
-        i = songs_name[i:raw_string.find(':', i)]
-        print(i)
+        # find song name
+        song_index = input_file.find('*', song_index + 1)  # update the song index to the last appearance of *
+        song_name = input_file[song_index + 1:input_file.find(':', song_index)]  # assign the song and go on!
+        #  find song length
+        singer_index = input_file.find(':', song_index) + 2
+        singer = input_file[singer_index:input_file.find(":", singer_index)]
+        # find song length
+        length_index = input_file.find(':', singer_index) + 2
+        song_length = input_file[length_index:input_file.find(":", length_index) + 3]
+        # find song lyrics
+        lyc_index = input_file.find(':', length_index) + 5
+        lyc = input_file[lyc_index:input_file.find("*", length_index) or input_file.find("#", length_index)]
 
 
 def main():
-    extract_data("Pink_Floyd_DB.txt")
+    extract_data(get_text("Pink_Floyd_DB.txt"))
 
 
 if __name__ == '__main__':
