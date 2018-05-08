@@ -18,6 +18,7 @@ def main():
         client_socket, client_address = listen_socket.accept()
         command = ""
         client_socket.sendall("Welcome to Pink Floyd database!".encode())
+        print(client_address[0] + " has connected on port " + str(client_address[1]))
         while not command == "Exit":
             try:  # try to send response, throw exception if you can't
                 response = client_socket.recv(1024).decode()
@@ -59,7 +60,7 @@ def Alist(parameter):
     for song in database:
         if song[4] not in album_list:
             album_list.append(song[4])
-    return "Album list:\t" + str(album_list)
+    return "Album list: " + str(album_list)
 
 
 def SongsInAlb(parameter):
