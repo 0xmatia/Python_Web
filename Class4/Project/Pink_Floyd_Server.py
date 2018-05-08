@@ -92,23 +92,42 @@ def GetLyc(parameter):
     # song[3] = lyrics, song[0] - song name
     for song in database:
         if song[0] == parameter:
-            return ("----Lyrics for \'" + song[0] + "\' are:----\n" + song[3])
-    return "Song wasn't found"
+            return "----Lyrics for \'" + song[0] + "\' are:----\n" + song[3]
+    return "The entered song wasn't found"
 
 
 def WhichAlb(parameter):
+    """
+    The function receives a song name and returns its album
+    :param parameter: the song name
+    :type parameter: str
+    :return: the album of the song
+    :rtype: str
+    """
     print("WhichAlb function activated")
-    return "WhichAlb function activated"
+    # song[0] - song name, song[4] - album name
+    for song in database:
+        if song[0] == parameter:
+            return "The song of \'" + song[0] + "\' is in the " + song[4] + "album"
+    return "The entered song wasn't found"
 
 
 def SByName(parameter):
     print("SByName function activated")
-    return "SByName function activated"
+    song_list = []
+    for song in database:
+        if parameter.lower() in song[0].lower():
+            song_list.append(song[0])
+    return "Songs with the word you entered are in their name are: " + str(song_list) + "\n"
 
 
 def SByLyc(parameter):
     print("SByLyc function activated")
-    return "SByLyc function activated"
+    song_list = []
+    for song in database:
+        if parameter.lower() in song[3].lower():
+            song_list.append(song[0])
+    return "Songs with the lyrics you entered are: " + str(song_list) + "\n"
 
 
 if __name__ == '__main__':
