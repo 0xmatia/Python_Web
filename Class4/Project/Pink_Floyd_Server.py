@@ -1,12 +1,12 @@
 import socket
 import Databaser
-import sys
+
+database = Databaser.extract_data("Pink_Floyd_DB.txt")
+PORT = 9011
+
 
 def main():
-    print(sys.path)
-    PORT = 9011
     print("Listening on port 9011")
-    print(Databaser.extract_data("Pink_Floyd_DB.txt"))
     call_function = {"Alist": Alist, "SongsInAlb": SongsInAlb, "SongLen": SongLen, "GetLyc": GetLyc,
                      "WhichAlb": WhichAlb, "SByName": SByName, "SByLyc": SByLyc}
     listen_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -47,18 +47,37 @@ def disassemble_response(client_response):
 
 
 def Alist(parameter):
-    print("Alist function activated")
-    return "Alist function activated"
+    """
+    the function returns a list with all the albums
+    :param parameter: default empty parameter
+    :type parameter: str
+    :return: a list with album names
+    :rtype: list
+    """
+    album_list = []
+    print("Alist function is being activated")
+    for song in database:
+        if song[4] not in album_list:
+            album_list.append(song[4])
+    return "Album list:\t" + str(album_list)
 
 
-def SongsInAlb(paramter):
+def SongsInAlb(parameter):
     print("SongsInAlb function activated")
-    return "SongsInAlb function activated"
+    # song[0] - song name, song[4] - album name
+    song_list = []
+    for song in database:
+        if (song[4] == parameter) and (song[0] not in song_list):
+            song_list.append(song[0])
+    return "Songs in \'" + str(parameter) + '\': ' + str(song_list)
 
 
 def SongLen(parameter):
-    print("SongsLen function activated")
-    return "SongsLen function activated"
+    print("SongLen function activated")
+    # song[0] - song name, song[2] - length
+    for song in database:
+        if song[0] == parameter:
+            return parameter + "\'s length: " + str(song[2])
 
 
 def GetLyc(parameter):

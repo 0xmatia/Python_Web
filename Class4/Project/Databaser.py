@@ -48,5 +48,4 @@ def extract_data(input_file):
         year_index = input_file.find(album_name) + len(album_name) + 2
         album_year = input_file[year_index:year_index + 4]
         database.append((song_name, singer, song_length, lyc, album_name, album_year))
-    print(database)
     return database

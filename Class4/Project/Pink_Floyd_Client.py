@@ -52,6 +52,7 @@ def assemble_request(command, connection, parameter=""):
         connection.sendall(request)
         print(connection.recv(1024).decode())
     except Exception:  # if you cannot connect to server, try to reconnect
+        print("Re-connecting to server")
         return connect_server(IP, PORT)
     return connection
 
