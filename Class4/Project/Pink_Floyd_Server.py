@@ -81,8 +81,19 @@ def SongLen(parameter):
 
 
 def GetLyc(parameter):
+    """
+    The function returns the lyrics for specific song
+    :param parameter: song name
+    :type parameter: str
+    :return: the lyrics for the song
+    :rtype: str
+    """
     print("GetLyc function activated")
-    return "GetLyc function activated"
+    # song[3] = lyrics, song[0] - song name
+    for song in database:
+        if song[0] == parameter:
+            return ("----Lyrics for \'" + song[0] + "\' are:----\n" + song[3])
+    return "Song wasn't found"
 
 
 def WhichAlb(parameter):
