@@ -1,61 +1,83 @@
 import socket
+import time
 
-connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # make the socket global
+IP = "127.0.0.1"
+PORT = 9011
 
 
 def main():
-    IP = "127.0.0.1"
-    PORT = 9011
-    flag = True
     command_list = ["Alist", "SongsInAlb", "SongLen", "GetLyc", "WhichAlb", "SByName", "SByLyc", "Exit"]
-    address = (IP, PORT)
-    connection.connect(address)
-    print(connection.recv(1024).decode())  # connection to server was successful
     choice = "Alist"
-    while not choice == command_list[7] and flag:
+    connection = connect_server(IP, PORT)  # obtain the connection socket
+    while not choice == command_list[7]:
         print(" >>>>>> Command list: Alist, SongsInAlb, SongLen, GetLyc, WhichAlb, SByName, SByLyc, Exit <<<<<<")
         choice = input("Enter command: ")
         if choice == command_list[0]:
-            flag = assemble_request(command_list[0])
+            connection = assemble_request(command_list[0], connection)
         elif choice == command_list[1]:
             album_name = input("Enter album name: ")
-            flag = assemble_request(command_list[1], album_name)
+            connection = assemble_request(command_list[1], connection, album_name)
         elif choice == command_list[2]:
             song_name = input("Enter song name: ")
-            flag = assemble_request(command_list[2], song_name)
+            connection = assemble_request(command_list[2], connection, song_name)
         elif choice == command_list[3]:
             song_name = input("Enter song name: ")
-            flag = assemble_request(command_list[3], song_name)
+            connection = assemble_request(command_list[3], connection, song_name)
         elif choice == command_list[4]:
             song_name = input("Enter song name: ")
-            flag = assemble_request(command_list[4], song_name)
+            connection = assemble_request(command_list[4], connection, song_name)
         elif choice == command_list[5]:
             word = input("Enter a word: ")
-            flag = assemble_request(command_list[5], word)
+            connection = assemble_request(command_list[5], connection, word)
         elif choice == command_list[6]:
             word = input("Enter a word: ")
-            flag = assemble_request(command_list[6], word)
+            connection = assemble_request(command_list[6], connection, word)
     #  send exit request
-    assemble_request(command_list[7])
+    assemble_request(command_list[7], connection)
 
 
-def assemble_request(command, parameter=""):
+def assemble_request(command, connection, parameter=""):
     """
-    The function tries to send request to server and throws exception if failes
-    :param command: The command the user asked
+    The function tries to send the request to server, throws exception if fails and tries to reconnect
+    :param command: the command to send
     :type command: str
-    :param parameter: the parameter required, empty by default
+    :param connection: the connection socket
+    :type connection: socket.py
+    :param parameter: the parameters the user want to send to the server
     :type parameter: str
-    :return:False if the program failed to contact server
-    :rtype: bool
+    :return: the socket - the same one if nothing fails, the updates socket if it reached the exception
     """
+    request = ("command=" + command + "&parameter=" + parameter).encode()
     try:
-        connection.sendall(("command=" + command + "&parameter=" + parameter).encode())
-        print(connection.recv(1024).decode())  # receive and print server response
-        return True
-    except Exception:
-        print("Can't reach server. Program is being terminated.")
-        return False
+        connection.sendall(request)
+        print(connection.recv(1024).decode())
+    except Exception:  # if you cannot connect to server, try to reconnect
+        return connect_server(IP, PORT)
+    return connection
+
+
+def connect_server(IP, PORT):
+    """
+    This function tries to connect to the server
+    :param IP: The ip of the server
+    :type IP: str
+    :param PORT: the port the server is listening to
+    :type PORT: int
+    :return: the connection socket
+    :rtype: socket
+    """
+    connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    address = (IP, PORT)
+    msg = ""
+    while not msg == "Welcome to Pink Floyd database!":
+        try:
+            connection.connect(address)
+            msg = connection.recv(1024).decode()
+        except Exception:
+            print("Can't reach server, trying again")
+            time.sleep(2)
+    print(msg)  # connection to server was successful
+    return connection
 
 
 if __name__ == '__main__':

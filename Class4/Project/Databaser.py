@@ -12,11 +12,16 @@ def get_text(file_path):
 
 
 def extract_data(input_file):
+    """
+    The function extracts the information from the text file and formats it accordingly
+    :param input_file: the database file
+    :type input_file: str
+    :return: the database in a list of tuples
+    :rtype: list
+    """
+    input_file = get_text(input_file)  # get the text from the file
     song_index = 1
-    song_name = ""
-    song_length = 0
-    singer = ""
-    lyc = ""
+    database = []
     for song in range(0,
                       input_file.count(
                           "*")):  # run through the number of songs, each time assemble the required information
@@ -33,11 +38,15 @@ def extract_data(input_file):
         # find song lyrics
         lyc_index = input_file.find(':', length_index) + 5
         lyc = input_file[lyc_index:input_file.find("*", length_index) or input_file.find("#", length_index)]
-
-
-def main():
-    extract_data(get_text("Pink_Floyd_DB.txt"))
-
-
-if __name__ == '__main__':
-    main()
+        # finding album:
+        max_index = 0  # this will be the index of the highest # until the song index
+        for i in range(0, song_index):
+            if input_file[i] == "#":
+                max_index = i
+        album_name = input_file[max_index + 1:input_file.find(":", max_index + 1)]
+        # get album year
+        year_index = input_file.find(album_name) + len(album_name) + 2
+        album_year = input_file[year_index:year_index + 4]
+        database.append((song_name, singer, song_length, lyc, album_name, album_year))
+    print(database)
+    return database

@@ -1,9 +1,12 @@
 import socket
-
+import Databaser
+import sys
 
 def main():
+    print(sys.path)
     PORT = 9011
     print("Listening on port 9011")
+    print(Databaser.extract_data("Pink_Floyd_DB.txt"))
     call_function = {"Alist": Alist, "SongsInAlb": SongsInAlb, "SongLen": SongLen, "GetLyc": GetLyc,
                      "WhichAlb": WhichAlb, "SByName": SByName, "SByLyc": SByLyc}
     listen_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -14,9 +17,9 @@ def main():
         listen_socket.listen(1)
         client_socket, client_address = listen_socket.accept()
         command = ""
+        client_socket.sendall("Welcome to Pink Floyd database!".encode())
         while not command == "Exit":
             try:  # try to send response, throw exception if you can't
-                client_socket.sendall("Welcome to Pink Floyd database!".encode())
                 response = client_socket.recv(1024).decode()
                 command, parameter = disassemble_response(response)
                 if not command == "Exit":
