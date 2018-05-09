@@ -19,6 +19,8 @@ def main():
         command = ""
         client_socket.sendall("Welcome to Pink Floyd database!".encode())
         print(client_address[0] + " has connected on port " + str(client_address[1]))
+        # before you take commands, verify
+        authenticate(client_socket)
         while not command == "Exit":
             try:  # try to send response, throw exception if you can't
                 response = client_socket.recv(1024).decode()
@@ -129,6 +131,25 @@ def SByLyc(parameter):
         if parameter.lower() in song[3].lower():
             song_list.append(song[0])
     return "Songs with the lyrics you entered are: " + str(song_list) + "\n"
+
+
+def authenticate(connection):
+    client_response = connection.recv(1024).decode()
+    print(client_response)
+    if client_response[3] == "1":  # if id = 1 we just need to confirm it is correct!
+        print("login was requested")
+        with open("user_entries.txt", "r") as text_file:
+            file_content = text_file.read().split("|")
+        username = client_response[client_response.find("username") + len("username") + 1:client_response.find("&",
+                                                                                                               5)]  # start searching from 5 for &
+        password = client_response[client_response.find("password") + len("password") + 1:]
+        for user in file_content:
+            temp = user.split("&")  # split the user and show me the username, password and mail
+            if ("username=" + username == temp[0]) and ("password=" + password == temp[1]):
+                print("user authenticated, sending response")
+                connection.sendall("Ok".encode())
+                break
+        connection.sendall("Bad".encode())
 
 
 if __name__ == '__main__':

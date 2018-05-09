@@ -6,6 +6,7 @@ import colorama
 IP = "127.0.0.1"
 PORT = 9011
 colorama.init()  # make colors visible
+AUTH = False
 
 
 def main():
@@ -85,7 +86,27 @@ def connect_server(IP, PORT):
             print("Can't reach server, trying again")
             time.sleep(2)
     print(msg)  # connection to server was successful
+    authenticate(connection)
+    # login\register
     return connection
+
+
+def authenticate(connection):
+    choice = 0
+    result = ""
+    while not choice == 1 or not 2:
+        choice = int(input("1. Login \n2. Register \nExit "))
+    if choice == 1:
+        username = input("Enter username: ")
+        password = input("Enter password: ")
+        packet = "id=" + str(choice) + "&username=" + username + "&password=" + password
+        connection.sendall(packet.encode())
+    elif choice == 2:
+        username = input("Enter username: ")
+        password = input("Enter password: ")
+        mail = input("Please enter your email: ")
+        packet = "id=" + str(choice) + "&username=" + username + "&password=" + password + "&mail" + mail
+        connection.sendall(packet.encode())
 
 
 if __name__ == '__main__':
