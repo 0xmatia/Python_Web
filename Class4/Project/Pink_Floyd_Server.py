@@ -8,7 +8,8 @@ PORT = 9011
 def main():
     print("Listening on port 9011")
     call_function = {"Alist": Alist, "SongsInAlb": SongsInAlb, "SongLen": SongLen, "GetLyc": GetLyc,
-                     "WhichAlb": WhichAlb, "SByName": SByName, "SByLyc": SByLyc, "cmnWords": cmnWords}
+                     "WhichAlb": WhichAlb, "SByName": SByName, "SByLyc": SByLyc, "cmnWords": cmnWords, "albumLen":
+                         albumLen}
     listen_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_address = ('', PORT)
     listen_socket.bind(server_address)
@@ -25,7 +26,6 @@ def main():
                 command, parameter = disassemble_response(response)
                 if not command == "Exit":
                     a = call_function[command](parameter)
-                    print(a)
                     client_socket.sendall(a.encode())
             except Exception:
                 print("Client disconnected unexpectedly")
@@ -133,12 +133,19 @@ def SByLyc(parameter):
 
 
 def cmnWords(parameter):
+    """
+    This function returns the 50 most common words in pink floyd lyrics
+    :param parameter: empty parameter
+    :type parameter: str
+    :return: the list of the most common words
+    :rtype: str
+    """
     lyrics = ""
     words = []
     i = 0
     word = ""
     send = []
-    occurrences = {"side": 5}
+    occurrences = {}
     for song in database:
         lyrics += song[3]
     # separate words
@@ -161,6 +168,37 @@ def cmnWords(parameter):
             send.append(word[0])
             i += 1
     return "The 50 most common words are: " + str(send)
+
+
+def albumLen(parameter):
+    """
+    The function returns the list of albums from the longest to the shortest
+    :param parameter: nothing
+    :type parameter: str
+    :return: the list of albums sorted from longest to shortest
+    :rtype: str
+    """
+    len_dict = {}
+    send = []
+    for song in database:
+        a = song[2]
+        if len(a) == 5:
+            s = int(a[0:2]) + int(a[3:5]) / 60  # get the time in minutes
+        else:
+            s = int(a[0]) + int(a[3:4]) / 60  # get the time in minutes
+        if song[4] not in len_dict.keys():
+            len_dict[song[4]] = s
+        else:
+            len_dict[song[4]] += s
+
+    for key, value in len_dict.items():
+        len_dict[key] = round(value, 2)
+    sorted_words = sorted(len_dict.items())  # this make a list of tuples
+    sorted_words.sort(key=return_second, reverse=True)
+
+    for album in sorted_words:
+        send.append(album[0])
+    return "This is a list of albums from the longest to the shortest: " + str(send)
 
 
 def return_second(t):
