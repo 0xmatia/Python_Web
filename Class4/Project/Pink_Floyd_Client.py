@@ -13,7 +13,7 @@ def main():
     command_list = ["Alist", "SongsInAlb", "SongLen", "GetLyc", "WhichAlb", "SByName", "SByLyc", "Exit"]
     choice = "Alist"
     connection = connect_server(IP, PORT)  # obtain the connection socket
-    while not choice == command_list[7]:
+    while not choice == command_list[7] and AUTH:
         print(
             colored(" >>>>>> Command list: Alist, SongsInAlb, SongLen, GetLyc, WhichAlb, SByName, SByLyc, Exit <<<<<<",
                     "magenta", attrs=['bold']))
@@ -78,35 +78,54 @@ def connect_server(IP, PORT):
     connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     address = (IP, PORT)
     msg = ""
-    while not msg == "Welcome to Pink Floyd database!":
+    global AUTH
+    while not msg == "Welcome to Pink Floyd database!" or not AUTH:
         try:
             connection.connect(address)
             msg = connection.recv(1024).decode()
+            AUTH = authenticate(connection)
         except Exception:
             print("Can't reach server, trying again")
             time.sleep(2)
-    print(msg)  # connection to server was successful
-    authenticate(connection)
+    if AUTH:
+        print(msg)  # connection to server was successful
     # login\register
     return connection
 
 
 def authenticate(connection):
     choice = 0
-    result = ""
-    while not choice == 1 or not 2:
-        choice = int(input("1. Login \n2. Register \nExit "))
-    if choice == 1:
-        username = input("Enter username: ")
-        password = input("Enter password: ")
-        packet = "id=" + str(choice) + "&username=" + username + "&password=" + password
-        connection.sendall(packet.encode())
-    elif choice == 2:
-        username = input("Enter username: ")
-        password = input("Enter password: ")
-        mail = input("Please enter your email: ")
-        packet = "id=" + str(choice) + "&username=" + username + "&password=" + password + "&mail" + mail
-        connection.sendall(packet.encode())
+    ok = False
+    while not ok:
+        while not 1 <= choice <= 3:
+            choice = int(input("1. Login \n2. Register \n3. Exit"))
+            print(choice)
+        if choice == 1:
+            username = input("Enter username: ")
+            password = input("Enter password: ")
+            packet = "id=" + str(choice) + "&username=" + username + "&password=" + password
+            connection.sendall(packet.encode())
+            # server answer:
+            result = connection.recv(1024).decode()
+            if result == "Bad":
+                print("Error authenticating. Please try again.")
+                choice = 0
+            else:
+                print(colored("Connected successfully\n", "green"))
+                ok = True
+
+        elif choice == 2:
+            username = input("Enter username: ")
+            password = input("Enter password: ")
+            mail = input("Please enter your email: ")
+            packet = "id=" + str(choice) + "&username=" + username + "&password=" + password + "&mail=" + mail
+            connection.sendall(packet.encode())
+        elif choice == 3:
+            packet = "id=" + str(choice)
+            connection.sendall(packet.encode())
+            ok = False
+            break
+    return ok
 
 
 if __name__ == '__main__':

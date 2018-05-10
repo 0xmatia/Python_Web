@@ -3,6 +3,7 @@ import Databaser
 
 database = Databaser.extract_data("Pink_Floyd_DB.txt")
 PORT = 9011
+STATUS = False
 
 
 def main():
@@ -14,13 +15,18 @@ def main():
     listen_socket.bind(server_address)
 
     while True:  # the server runs forever, never closes. the second while is for the client socket, which closes
+        global STATUS
         listen_socket.listen(1)
         client_socket, client_address = listen_socket.accept()
         command = ""
         client_socket.sendall("Welcome to Pink Floyd database!".encode())
         print(client_address[0] + " has connected on port " + str(client_address[1]))
         # before you take commands, verify
-        authenticate(client_socket)
+        STATUS = authenticate(client_socket)
+        if not STATUS:
+            print("Couldn't authenticate user. listening on port 9011")
+            command = "Exit"
+            client_socket.close()
         while not command == "Exit":
             try:  # try to send response, throw exception if you can't
                 response = client_socket.recv(1024).decode()
@@ -134,22 +140,41 @@ def SByLyc(parameter):
 
 
 def authenticate(connection):
-    client_response = connection.recv(1024).decode()
-    print(client_response)
-    if client_response[3] == "1":  # if id = 1 we just need to confirm it is correct!
-        print("login was requested")
-        with open("user_entries.txt", "r") as text_file:
-            file_content = text_file.read().split("|")
-        username = client_response[client_response.find("username") + len("username") + 1:client_response.find("&",
-                                                                                                               5)]  # start searching from 5 for &
-        password = client_response[client_response.find("password") + len("password") + 1:]
-        for user in file_content:
-            temp = user.split("&")  # split the user and show me the username, password and mail
-            if ("username=" + username == temp[0]) and ("password=" + password == temp[1]):
-                print("user authenticated, sending response")
-                connection.sendall("Ok".encode())
-                break
-        connection.sendall("Bad".encode())
+    ok = False
+    with open("user_entries.txt", "r") as text_file:
+        file_content = text_file.read().split("|")
+    while not ok:
+        client_response = connection.recv(1024).decode()
+        print(client_response)
+        if not client_response[3] == "3":  # if the user wanted to exit, don't enter the loop
+            if client_response[3] == "2":
+                print("register was requested")
+                print(client_response)
+                username = client_response[
+                           client_response.find("username") + len("username") + 1:client_response.find("&",
+                                                                                                       5)]  # start searching from 5 for &
+                password = client_response[client_response.find("password") + len("password") + 1:]
+                print(username + " " + password)
+            elif client_response[3] == "1":  # if id = 1 we just need to confirm it is correct!
+                print("login was requested")
+                username = client_response[
+                           client_response.find("username") + len("username") + 1:client_response.find("&",
+                                                                                                       5)]  # start searching from 5 for &
+                password = client_response[
+                           client_response.find("password") + len("password") + 1:client_response.find("mail") - 1]
+                print(username+"\n")
+                print(password)
+                for user in file_content:
+                    temp = user.split("&")  # split the user and show me the username, password and mail
+                    if ("username=" + username == temp[0]) and ("password=" + password == temp[1]):
+                        print("user authenticated, sending response")
+                        connection.sendall("Ok".encode())
+                        ok = True
+                        break
+                if ok:  # if the details are correct, exit the main loop and go listen for user requests
+                    break
+                connection.sendall("Bad".encode())
+        return ok
 
 
 if __name__ == '__main__':
