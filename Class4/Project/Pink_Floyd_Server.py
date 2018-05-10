@@ -8,7 +8,7 @@ PORT = 9011
 def main():
     print("Listening on port 9011")
     call_function = {"Alist": Alist, "SongsInAlb": SongsInAlb, "SongLen": SongLen, "GetLyc": GetLyc,
-                     "WhichAlb": WhichAlb, "SByName": SByName, "SByLyc": SByLyc}
+                     "WhichAlb": WhichAlb, "SByName": SByName, "SByLyc": SByLyc, "cmnWords": cmnWords}
     listen_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_address = ('', PORT)
     listen_socket.bind(server_address)
@@ -25,6 +25,7 @@ def main():
                 command, parameter = disassemble_response(response)
                 if not command == "Exit":
                     a = call_function[command](parameter)
+                    print(a)
                     client_socket.sendall(a.encode())
             except Exception:
                 print("Client disconnected unexpectedly")
@@ -131,11 +132,46 @@ def SByLyc(parameter):
     return "Songs with the lyrics you entered are: " + str(song_list) + "\n"
 
 
-def cmnWords():
-    words_list = []
-    for album in database:
-        for song in album:
-            for lyc in song:
+def cmnWords(parameter):
+    lyrics = ""
+    words = []
+    i = 0
+    word = ""
+    send = []
+    occurrences = {"side": 5}
+    for song in database:
+        lyrics += song[3]
+    # separate words
+    for char in lyrics:
+        if not char == "\n" and not char == " " and not char == "." and not char == "," and not char == "!" and not char == "?":
+            word += char
+        else:
+            if not word == '':
+                words.append(word.lower())
+            word = ""
+    print(words)
+    # not that we have the word list, we can count for occurrences
+    for word in words:
+        if not word == occurrences:
+            occurrences[word] = words.count(word)
+    sorted_words = sorted(occurrences.items())  # this make a list of tuples
+    sorted_words.sort(key=return_second, reverse=True)
+    for word in sorted_words:
+        if i < 50:  # with range it doesnt work have no idea why
+            send.append(word[0])
+            i += 1
+    return "The 50 most common words are: " + str(send)
+
+
+def return_second(t):
+    """
+    This function returns the second element of a tuple
+    :param t: tuple
+    :type t: tuple
+    :return: second element of tuple
+    :rtype: str
+    """
+    return t[1]
 
 
 if __name__ == '__main__':

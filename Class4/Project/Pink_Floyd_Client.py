@@ -7,12 +7,12 @@ PORT = 9011
 
 
 def main():
-    command_list = ["Alist", "SongsInAlb", "SongLen", "GetLyc", "WhichAlb", "SByName", "SByLyc", "Exit"]
+    command_list = ["Alist", "SongsInAlb", "SongLen", "GetLyc", "WhichAlb", "SByName", "SByLyc", "cmnWords", "Exit"]
     choice = "Alist"
     connection = connect_server(IP, PORT)  # obtain the connection socket
-    while not choice == command_list[7]:
+    while not choice == command_list[8]:
         print(
-            " >>>>>> Command list: Alist, SongsInAlb, SongLen, GetLyc, WhichAlb, SByName, SByLyc, Exit <<<<<<")
+            " >>>>>> Command list: Alist, SongsInAlb, SongLen, GetLyc, WhichAlb, SByName, SByLyc, cmnWords, Exit <<<<<<")
         choice = input("Enter command: ")
         if choice == command_list[0]:
             connection = assemble_request(command_list[0], connection)
@@ -35,7 +35,9 @@ def main():
             word = input("Enter a word: ")
             connection = assemble_request(command_list[6], connection, word)
         elif choice == command_list[7]:
-            assemble_request(command_list[7], connection)  # send exit request
+            connection = assemble_request(command_list[7], connection)
+        elif choice == command_list[8]:
+            assemble_request(command_list[8], connection)  # send exit request
         else:
             print("Invalid command!\n")
 
