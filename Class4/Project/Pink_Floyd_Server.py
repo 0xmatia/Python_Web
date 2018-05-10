@@ -131,5 +131,12 @@ def SByLyc(parameter):
     return "Songs with the lyrics you entered are: " + str(song_list) + "\n"
 
 
+def cmnWords():
+    words_list = []
+    for album in database:
+        for song in album:
+            for lyc in song:
+
+
 if __name__ == '__main__':
     main()
