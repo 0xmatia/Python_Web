@@ -1,8 +1,11 @@
 import socket
 import time
+from termcolor import colored
+import colorama
 
 IP = "127.0.0.1"
 PORT = 9011
+colorama.init()  # make colors visible
 
 
 def main():
@@ -11,8 +14,9 @@ def main():
     choice = "Alist"
     connection = connect_server(IP, PORT)  # obtain the connection socket
     while not choice == command_list[9]:
-        print(
-            " >>>>>> Command list: Alist, SongsInAlb, SongLen, GetLyc, WhichAlb, SByName, SByLyc, cmnWords, albumLen ,Exit <<<<<<")
+        print(colored(
+            " >>>>>> Command list: Alist, SongsInAlb, SongLen, GetLyc, WhichAlb, SByName, SByLyc, cmnWords, albumLen ,Exit <<<<<<",
+            "magenta", attrs=['bold']))
         choice = input("Enter command: ")
         if choice == command_list[0]:
             connection = assemble_request(command_list[0], connection)
@@ -41,7 +45,7 @@ def main():
         elif choice == command_list[9]:
             assemble_request(command_list[9], connection)  # send exit request
         else:
-            print("Invalid command!\n")
+            print(colored("Invalid command!\n", "red", attrs=['bold']))
 
 
 def assemble_request(command, connection, parameter=""):
@@ -58,7 +62,7 @@ def assemble_request(command, connection, parameter=""):
     request = ("command=" + command + "&parameter=" + parameter).encode()
     try:
         connection.sendall(request)
-        print(connection.recv(4096).decode())
+        print(colored(connection.recv(4096).decode(), "green"))
     except Exception:  # if you cannot connect to server, try to reconnect
         print("Re-connecting to server\n")
         return connect_server(IP, PORT)

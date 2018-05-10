@@ -156,7 +156,6 @@ def cmnWords(parameter):
             if not word == '':
                 words.append(word.lower())
             word = ""
-    print(words)
     # not that we have the word list, we can count for occurrences
     for word in words:
         if not word == occurrences:
