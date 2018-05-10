@@ -1,21 +1,18 @@
 import socket
 import time
-from termcolor import colored
-import colorama
+
 
 IP = "127.0.0.1"
 PORT = 9011
-colorama.init()  # make colors visible
 
 
 def main():
-    command_list = ["Alist", "SongsInAlb", "SongLen", "GetLyc", "WhichAlb", "SByName", "SByLyc", "Exit"]
+    command_list = ["Alist", "SongsInAlb", "SongLen", "GetLyc", "WhichAlb", "SByName", "SByLyc", "cmnWords", "Exit"]
     choice = "Alist"
     connection = connect_server(IP, PORT)  # obtain the connection socket
-    while not choice == command_list[7]:
+    while not choice == command_list[8]:
         print(
-            colored(" >>>>>> Command list: Alist, SongsInAlb, SongLen, GetLyc, WhichAlb, SByName, SByLyc, Exit <<<<<<",
-                    "magenta", attrs=['bold']))
+            " >>>>>> Command list: Alist, SongsInAlb, SongLen, GetLyc, WhichAlb, SByName, SByLyc, cmnWords, Exit <<<<<<")
         choice = input("Enter command: ")
         if choice == command_list[0]:
             connection = assemble_request(command_list[0], connection)
@@ -38,9 +35,11 @@ def main():
             word = input("Enter a word: ")
             connection = assemble_request(command_list[6], connection, word)
         elif choice == command_list[7]:
-            assemble_request(command_list[7], connection)  # send exit request
+            connection = assemble_request(command_list[7], connection)
+        elif choice == command_list[8]:
+            assemble_request(command_list[8], connection)  # send exit request
         else:
-            print(colored("Invalid command!\n", "red", attrs=['bold']))
+            print("Invalid command!\n")
 
 
 def assemble_request(command, connection, parameter=""):
@@ -57,7 +56,7 @@ def assemble_request(command, connection, parameter=""):
     request = ("command=" + command + "&parameter=" + parameter).encode()
     try:
         connection.sendall(request)
-        print(colored(connection.recv(4096).decode(), "green"))
+        print(connection.recv(4096).decode())
     except Exception:  # if you cannot connect to server, try to reconnect
         print("Re-connecting to server\n")
         return connect_server(IP, PORT)
