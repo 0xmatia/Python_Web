@@ -1,5 +1,5 @@
 from scapy3k.all import *
-from datetime import datetime, timedelta
+from time import sleep
 
 DNS_IP = "8.8.8.8"
 DNS_PORT = 53
@@ -8,16 +8,20 @@ SRC_PORT = 10212
 
 def main():
     url = input("Enter a domain: ")
-    ipmsg = IP(dst=dns_lookup(url))
+    ip = dns_lookup(url)
+    ipmsg = IP(dst=ip, ttl=1)
     icmpmsg = ICMP()
-    msg = ipmsg / icmpmsg
-    time_list = []
-    for i in range(0, 3):
-        t = datetime.now()
-        sr1(msg, verbose=0)
-        print(str(i + 1) + ":   " + str(int((datetime.now() - t).microseconds / 1000)))
-        time_list.append(int((datetime.now() - t).microseconds / 1000))
-    print("Average ping: ", int((time_list[0]+time_list[1]+time_list[2])/3))
+    ans = sr1(ipmsg/icmpmsg, verbose=0)
+    index = 1
+    while ans[IP].src != ip:
+        print(index, ". ", ans[IP].src)
+        ipmsg.ttl += 1
+        index += 1
+        ans = sr1(ipmsg / icmpmsg, verbose=0)
+        sleep(2)
+
+    print(index, ". ", ans[IP].src)
+    print("Destination reached! Total of", index, "hopes")
 
 
 def dns_lookup(url):
@@ -34,7 +38,6 @@ def dns_lookup(url):
     dnsmsg = DNS(rd=1, qd=DNSQR(qname=url))
     msg = ethmsg / ipmsg / udpmsg / dnsmsg
     ans = srp1(msg, verbose=0)
-    t = datetime.now().microsecond
     return ans[DNS][DNSRR].rdata
 
 
