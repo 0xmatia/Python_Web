@@ -1,4 +1,6 @@
-from scapy3k.all import *
+from scapy.layers.dns import DNS, DNSQR, DNSRR
+from scapy.layers.inet import *
+from scapy.sendrecv import srp1
 
 DNS_IP = "8.8.8.8"
 DNS_PORT = 53
@@ -24,6 +26,7 @@ def get_response(url):
     dnsmsg = DNS(rd=1, qd=DNSQR(qname=url))
     msg = ethmsg / ipmsg / udpmsg / dnsmsg
     ans = srp1(msg, verbose=0)
+    print(ans.show())
     print("IP: " + ans[DNS][DNSRR].rdata)
 
 

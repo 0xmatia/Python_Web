@@ -1,4 +1,6 @@
-from scapy3k.all import *
+from scapy.layers.dns import DNS, DNSQR, DNSRR
+from scapy.layers.inet import *
+from scapy.sendrecv import srp1
 from datetime import datetime, timedelta
 
 DNS_IP = "8.8.8.8"
