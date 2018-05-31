@@ -4,25 +4,28 @@ from scapy.sendrecv import srp1
 
 
 def main():
-    print("Welcome to Magshimshark!")
-    print("1 - DNS filter")
-    print("2 - DNS filter")
-    print("3 - DNS filter")
-    choice = int(input())
-    if choice == 1:
-        try:
+    print("Welcome to Magshimshark!\n")
+    choice = 1
+    while 3 >= choice >= 1:
+        print("1 - DNS filter")
+        print("2 - DNS filter")
+        print("3 - DNS filter")
+        print("4 - DNS filter")
+        choice = int(input())
+        if choice == 1:
             sniff(lfilter=filerDNS, prn=processDNS)
-        except Exception:
-            print("Hey")
+            print("\n\n\n")
+        elif choice == 2:
+            print("FUck")
 
 
 def filerDNS(packet):
     """
-    The function check if the given packet is DNS packet
+    The function check if the given packet is DNS packet (only answer queries)
     :param packet: the packet to check
     :return: true if the file is a packet, false otherwise
     """
-    return DNS in packet
+    return DNS in packet and packet[DNS].an is not None
 
 
 def processDNS(packet):
@@ -32,7 +35,8 @@ def processDNS(packet):
     :return:
     :rtype: None
     """
-    print(packet[DNS][DNSQR].qname.decode())
+    num_of_answers = packet[DNS].ancount
+    print(str(packet[DNS].an[num_of_answers-1].rdata))
 
 
 if __name__ == '__main__':
