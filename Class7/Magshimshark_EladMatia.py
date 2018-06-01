@@ -9,14 +9,18 @@ def main():
     while 3 >= choice >= 1:
         print("1 - DNS filter")
         print("2 - Weather filter")
-        print("3 - DNS filter")
-        print("4 - DNS filter")
+        print("3 - HTTP filter")
+        print("4 - Exit")
         choice = int(input())
         if choice == 1:
             sniff(lfilter=filerDNS, prn=processDNS)
             print("\n\n\n")
         elif choice == 2:
             sniff(lfilter=filter_weather, prn=process_weather)
+            print("\n\n\n")
+        elif choice == 3:
+            sniff(lfilter=filetHTTP, prn=processHTTP)
+            print("\n\n\n")
 
 
 def filerDNS(packet):
@@ -52,9 +56,37 @@ def filter_weather(packet):
 
 
 def process_weather(packet):
+    """
+    The function prints the weather packet nicely
+    :param packet: the weather packt
+    :type packet: packet
+    :return: none
+    """
     info = packet[Raw].load.decode()
     result = info[info.find("=")+1:info.find("&city")] + ": " + info[info.find("&text") + len("&text") + 1:]+", " + info[info.find("=", 40)+1:info.find("&text")] + " degrees in " + info[info.find("&city") + len("&city") + 1: info.find("&temp")]
     print(result)
+
+
+def filetHTTP(packet):
+    """
+    The function returns true if the packet is http false other wise
+    :param packet: the packet to check
+    :return: true if http, false otherwise
+    :rtype: bool
+    """
+    return TCP in packet and packet[TCP].dport == 80 and "GET" in str(packet)
+
+
+def processHTTP(packet):
+    """
+    The function prints the http request (only the requested file)
+    :param packet: the packet to check
+    :type packet: packet
+    :return: none
+    """
+    info = (str(packet[Raw]))
+    res = info[info.find("GET")+len("GET")+1:info.find(" HTTP/1.1")]
+    print(res)
 
 
 if __name__ == '__main__':
