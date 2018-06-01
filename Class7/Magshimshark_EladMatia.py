@@ -40,7 +40,8 @@ def processDNS(packet):
     :rtype: None
     """
     num_of_answers = packet[DNS].ancount
-    print(str(packet[DNS].an[num_of_answers-1].rdata))
+    if not type(packet[DNS].an[num_of_answers-1].rdata) == bytes:
+        print(packet[DNS].an[num_of_answers-1].rdata)
 
 
 def filter_weather(packet):
@@ -57,10 +58,18 @@ def filter_weather(packet):
 
 def process_weather(packet):
     """
+<<<<<<< Updated upstream
     The function prints the weather packet nicely
     :param packet: the weather packt
     :type packet: packet
     :return: none
+=======
+    The function receives a weather packets and prints it
+    :param packet: the packet to print
+    :type packet: packet
+    :return: None
+    :rtype: None
+>>>>>>> Stashed changes
     """
     info = packet[Raw].load.decode()
     result = info[info.find("=")+1:info.find("&city")] + ": " + info[info.find("&text") + len("&text") + 1:]+", " + info[info.find("=", 40)+1:info.find("&text")] + " degrees in " + info[info.find("&city") + len("&city") + 1: info.find("&temp")]
