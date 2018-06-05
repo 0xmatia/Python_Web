@@ -13,7 +13,7 @@ VEHICLE = "2554"
 
 def main():
     print("Running")
-    # sniff(lfilter=alien_packet, prn=process_alien)  # i sniffed with scapy and gathered the information for take off
+    # sniff(lfilter=alien_packet, prn=process_alien)  # i sniffed with scapy and gathered the information for take off. NO NEED FOR THIS ANYMORE
     # send data:
     con = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     server_address = (IP_ADDR, PORT)
@@ -29,7 +29,8 @@ def main():
     con.sendto(encoded_msg.encode(), server_address)
     for i in range(2):
         server_msg, server_addr = con.recvfrom(1024)
-        print(cypher(server_msg.decode()[6:], int(server_msg.decode()[3:6]), 1))
+        print(server_msg.decode())
+        print("Decoded- " + cypher(server_msg.decode()[6:], int(server_msg.decode()[3:6]), 1))
     # act like a proxy, and send "finished"          
     con.close()
 
