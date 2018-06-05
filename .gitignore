@@ -60,5 +60,3 @@ target/
 \.idea/workspace\.xml
 
 *.zip
-
-\.idea/inspectionProfiles/Project_Default\.xml
